@@ -1,9 +1,12 @@
-name: Build Desktop Pet
+name: Build and Release Desktop Pet
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build-windows:
@@ -34,3 +37,18 @@ jobs:
         with:
           name: MikuPet-macOS
           path: dist/MikuPet-Mac.zip
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: Miku Desktop Pet v1.0.0
+          files: |
+            artifacts/MikuPet-Windows/MikuPet.exe
+            artifacts/MikuPet-macOS/MikuPet-Mac.zip
