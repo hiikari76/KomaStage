@@ -1,0 +1,36 @@
+name: Build Desktop Pet
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install PyQt6 pyinstaller pillow
+      - run: pyinstaller --noconfirm --windowed --onefile --name "MikuPet" --add-data "assets;assets" --icon="assets/shime1.png" main.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MikuPet-Windows
+          path: dist/MikuPet.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install PyQt6 pyinstaller pillow
+      - run: pyinstaller --noconfirm --windowed --name "MikuPet" --add-data "assets:assets" --icon="assets/shime1.png" main.py
+      - run: ditto -c -k --sequesterRsrc --keepParent dist/MikuPet.app dist/MikuPet-Mac.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MikuPet-macOS
+          path: dist/MikuPet-Mac.zip
