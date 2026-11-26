@@ -47,8 +47,8 @@ jobs:
           path: artifacts
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.1.0
-          name: KomaStage v1.1.0 - Custom Shimeji Engine & Studio GUI
+          tag_name: v1.2.0
+          name: KomaStage v1.2.0 - Custom Shimeji Engine & Studio GUI
           files: |
             artifacts/KomaStage-Windows/KomaStage.exe
             artifacts/KomaStage-macOS/KomaStage-Mac.zip

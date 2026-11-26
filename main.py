@@ -86,7 +86,7 @@ class CharacterManager:
                 search_root = src
                 char_name = src.name
             else:
-                return False, "Lütfen geçerli bir klasör veya .zip dosyası seçin."
+                return False, "Please select a valid folder or .zip file."
 
             # shime1.png dosyasını içeren asıl görsel klasörünü bul (örn. iç içe img/ klasörü)
             sprite_dir = None
@@ -105,7 +105,7 @@ class CharacterManager:
                     sprite_dir = max(png_dirs, key=png_dirs.get)
 
             if not sprite_dir:
-                return False, "Seçilen pakette uygun PNG karakter görselleri bulunamadı."
+                return False, "No valid PNG character sprites found in the selected package."
 
             # Klasör adı sadece 'img' ise bir üst klasörün adını karakter adı yap
             if sprite_dir.name.lower() in ["img", "images", "sprites"] and sprite_dir.parent != temp_dir:
@@ -118,9 +118,9 @@ class CharacterManager:
                 shutil.copy2(png, target_dir / png.name)
                 copied += 1
 
-            return True, f"'{char_name}' başarıyla eklendi ({copied} kare)!"
+            return True, f"'{char_name}' imported successfully ({copied} frames)!"
         except Exception as e:
-            return False, f"İçe aktarma hatası: {str(e)}"
+            return False, f"Import error: {str(e)}"
         finally:
             if temp_dir and temp_dir.exists():
                 shutil.rmtree(temp_dir, ignore_errors=True)
@@ -338,37 +338,37 @@ class DesktopPet(QWidget):
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
-        actions_menu = menu.addMenu("Hareket Seç")
+        actions_menu = menu.addMenu("Select Action")
         for label_text, st in [
-            ("Yürü", "walk"),
-            ("Koş", "run"),
-            ("Özel Yürüyüş", "leek_walk"),
-            ("Otur", "sit"),
-            ("Mini Mod", "mini_miku"),
-            ("Kutuya Gir", "sleep_box"),
-            ("Duvara Tırman", "climb_wall")
+            ("Walk", "walk"),
+            ("Run", "run"),
+            ("Özel Walkyüş", "leek_walk"),
+            ("Sit", "sit"),
+            ("Mini Mode", "mini_miku"),
+            ("Hide in Box", "sleep_box"),
+            ("Climb Wall", "climb_wall")
         ]:
             act = QAction(label_text, self)
             act.triggered.connect(lambda checked, s=st: self.set_state(s))
             actions_menu.addAction(act)
 
         if self.app_controller:
-            panel_act = QAction("Kontrol Panelini Aç", self)
+            panel_act = QAction("Open Control Panel", self)
             panel_act.triggered.connect(self.app_controller.show_panel)
             menu.addAction(panel_act)
 
-            spawn_act = QAction(f"Bir {self.char_name} Daha Çağır (+1)", self)
+            spawn_act = QAction(f"Spawn Another {self.char_name} (+1)", self)
             spawn_act.triggered.connect(lambda: self.app_controller.spawn_pet(self.char_name))
             menu.addAction(spawn_act)
 
         menu.addSeparator()
-        pause_action = QAction("Devam Et" if self.is_paused else "Duraklat", self)
+        pause_action = QAction("Resume" if self.is_paused else "Pause", self)
         pause_action.triggered.connect(self.toggle_pause)
 
-        remove_action = QAction("Bu Maskotu Gönder", self)
+        remove_action = QAction("Dismiss Mascot", self)
         remove_action.triggered.connect(self.remove_self)
 
-        quit_action = QAction("Uygulamayı Kapat", self)
+        quit_action = QAction("Quit Application", self)
         quit_action.triggered.connect(QApplication.instance().quit)
 
         menu.addAction(pause_action)
@@ -404,7 +404,7 @@ class ControlPanel(QMainWindow):
         # Başlık
         title = QLabel("KomaStage")
         title.setObjectName("TitleLabel")
-        subtitle = QLabel("Özel Shimeji karakterlerini yönet, boyutlandır ve masaüstüne çağır")
+        subtitle = QLabel("Manage, resize, and summon custom Shimeji characters onto your desktop")
         subtitle.setObjectName("SubLabel")
         layout.addWidget(title)
         layout.addWidget(subtitle)
@@ -415,14 +415,14 @@ class ControlPanel(QMainWindow):
         char_layout = QVBoxLayout(char_card)
 
         header_row = QHBoxLayout()
-        lbl_chars = QLabel("Yüklü Karakterler")
+        lbl_chars = QLabel("Installed Characters")
         lbl_chars.setObjectName("SectionTitle")
 
-        btn_add_zip = QPushButton("+ ZIP Ekle")
+        btn_add_zip = QPushButton("+ Add ZIP")
         btn_add_zip.setObjectName("SecondaryBtn")
         btn_add_zip.clicked.connect(self.import_zip)
 
-        btn_add_dir = QPushButton("+ Klasör Ekle")
+        btn_add_dir = QPushButton("+ Add Folder")
         btn_add_dir.setObjectName("SecondaryBtn")
         btn_add_dir.clicked.connect(self.import_folder)
 
@@ -438,11 +438,11 @@ class ControlPanel(QMainWindow):
         char_layout.addWidget(self.char_list)
 
         spawn_row = QHBoxLayout()
-        btn_spawn = QPushButton("Seçili Karakteri Çağır (+1)")
+        btn_spawn = QPushButton("Summon Selected (+1)")
         btn_spawn.setObjectName("PrimaryBtn")
         btn_spawn.clicked.connect(self.spawn_selected)
 
-        btn_replace = QPushButton("Mevcutları Bununla Değiştir")
+        btn_replace = QPushButton("Replace Active with Selected")
         btn_replace.setObjectName("SecondaryBtn")
         btn_replace.clicked.connect(self.replace_with_selected)
 
@@ -456,13 +456,13 @@ class ControlPanel(QMainWindow):
         settings_card.setObjectName("Card")
         settings_layout = QVBoxLayout(settings_card)
 
-        lbl_settings = QLabel("Görünüm ve Hareket Ayarları")
+        lbl_settings = QLabel("Appearance & Movement Settings")
         lbl_settings.setObjectName("SectionTitle")
         settings_layout.addWidget(lbl_settings)
 
         # Boyut Kaydırıcısı
         size_row = QHBoxLayout()
-        self.lbl_size = QLabel(f"Maskot Boyutu: {self.controller.manager.config['size']} px")
+        self.lbl_size = QLabel(f"Mascot Size: {self.controller.manager.config['size']} px")
         self.slider_size = QSlider(Qt.Orientation.Horizontal)
         self.slider_size.setRange(64, 256)
         self.slider_size.setValue(self.controller.manager.config['size'])
@@ -474,7 +474,7 @@ class ControlPanel(QMainWindow):
         # Hız Kaydırıcısı
         speed_row = QHBoxLayout()
         speed_pct = int(self.controller.manager.config['speed_mult'] * 100)
-        self.lbl_speed = QLabel(f"Hareket Hızı: %{speed_pct}")
+        self.lbl_speed = QLabel(f"Movement Speed: {speed_pct}%")
         self.slider_speed = QSlider(Qt.Orientation.Horizontal)
         self.slider_speed.setRange(50, 250)
         self.slider_speed.setValue(speed_pct)
@@ -486,12 +486,12 @@ class ControlPanel(QMainWindow):
 
         # Alt Kontrol Butonları
         bottom_row = QHBoxLayout()
-        self.lbl_active = QLabel("Aktif Maskot: 1")
-        btn_clear = QPushButton("Tümünü Temizle")
+        self.lbl_active = QLabel("Active Mascots: 1")
+        btn_clear = QPushButton("Clear All")
         btn_clear.setObjectName("DangerBtn")
         btn_clear.clicked.connect(self.controller.clear_all_pets)
 
-        btn_open_dir = QPushButton("Klasörü Aç")
+        btn_open_dir = QPushButton("Open Folder")
         btn_open_dir.setObjectName("SecondaryBtn")
         btn_open_dir.clicked.connect(self.open_pets_folder)
 
@@ -624,14 +624,14 @@ class ControlPanel(QMainWindow):
 
     def import_zip(self):
         path, _ = QFileDialog.getOpenFileName(
-            self, "Shimeji ZIP Dosyası Seç", str(Path.home()), "ZIP Arşivleri (*.zip)"
+            self, "Select Shimeji ZIP File", str(Path.home()), "ZIP Archives (*.zip)"
         )
         if path:
             self.process_import(path)
 
     def import_folder(self):
         path = QFileDialog.getExistingDirectory(
-            self, "Shimeji Görsel Klasörü Seç", str(Path.home())
+            self, "Select Shimeji Sprite Folder", str(Path.home())
         )
         if path:
             self.process_import(path)
@@ -640,20 +640,20 @@ class ControlPanel(QMainWindow):
         ok, msg = self.controller.manager.import_character(path)
         if ok:
             self.refresh_character_list()
-            QMessageBox.information(self, "Başarılı", msg)
+            QMessageBox.information(self, "Success", msg)
         else:
-            QMessageBox.warning(self, "Uyarı", msg)
+            QMessageBox.warning(self, "Warning", msg)
 
     def on_size_changed(self, value):
-        self.lbl_size.setText(f"Maskot Boyutu: {value} px")
+        self.lbl_size.setText(f"Mascot Size: {value} px")
         self.controller.update_all_sizes(value)
 
     def on_speed_changed(self, value):
-        self.lbl_speed.setText(f"Hareket Hızı: %{value}")
+        self.lbl_speed.setText(f"Movement Speed: {value}%")
         self.controller.update_all_speeds(value / 100.0)
 
     def update_active_count(self, count):
-        self.lbl_active.setText(f"Aktif Maskot: {count}")
+        self.lbl_active.setText(f"Active Mascots: {count}")
 
     def open_pets_folder(self):
         import subprocess
@@ -737,13 +737,13 @@ class PetController:
         self.tray = QSystemTrayIcon(QIcon(icon_pix), self.app)
         tray_menu = QMenu()
 
-        panel_act = QAction("Kontrol Panelini Aç", self.app)
+        panel_act = QAction("Open Control Panel", self.app)
         panel_act.triggered.connect(self.show_panel)
 
-        add_act = QAction("Yeni Maskot Çağır (+1)", self.app)
+        add_act = QAction("Summon New Mascot (+1)", self.app)
         add_act.triggered.connect(lambda: self.spawn_pet())
 
-        quit_act = QAction("Çıkış", self.app)
+        quit_act = QAction("Quit", self.app)
         quit_act.triggered.connect(self.app.quit)
 
         tray_menu.addAction(panel_act)
