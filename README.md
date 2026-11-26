@@ -24,3 +24,7 @@ Head over to the **[Releases](../../releases)** section on the right to download
 
 ## Credits
 Default Hatsune Miku Shimeji sprites are sourced from [Shimeji.org](https://shimeji.org/u/5elo0kxg).
+
+## Credits
+
+- [Kawaii](https://icons8.com/icon/116704/kawaii) icon by [Icons8](https://icons8.com)
