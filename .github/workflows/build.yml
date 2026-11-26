@@ -38,8 +38,26 @@ jobs:
           name: KomaStage-macOS
           path: dist/KomaStage-Mac.zip
 
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libxkbcommon-x11-0 libxcb-cursor0
+      - run: pip install PyQt6 pyinstaller pillow
+      - run: pyinstaller --noconfirm --windowed --onefile --name "KomaStage" --add-data "assets:assets" --icon="assets/shime1.png" main.py
+      - run: tar -czvf dist/KomaStage-Linux.tar.gz -C dist KomaStage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KomaStage-Linux
+          path: dist/KomaStage-Linux.tar.gz
+
   release:
-    needs: [build-windows, build-macos]
+    needs: [build-windows, build-macos, build-linux]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
@@ -47,8 +65,9 @@ jobs:
           path: artifacts
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2.0
-          name: KomaStage v1.2.0 - Custom Shimeji Engine & Studio GUI
+          tag_name: v1.3.0
+          name: KomaStage v1.3.0 - Full Cross-Platform Support (macOS, Windows & Linux)
           files: |
             artifacts/KomaStage-Windows/KomaStage.exe
             artifacts/KomaStage-macOS/KomaStage-Mac.zip
+            artifacts/KomaStage-Linux/KomaStage-Linux.tar.gz

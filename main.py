@@ -135,10 +135,13 @@ class DesktopPet(QWidget):
         self.speed_mult = speed_mult
         self.app_controller = app_controller
 
-        self.setWindowFlags(
+        flags = (
             Qt.WindowType.FramelessWindowHint |
             Qt.WindowType.WindowStaysOnTopHint
         )
+        if sys.platform.startswith("linux"):
+            flags |= Qt.WindowType.Tool
+        self.setWindowFlags(flags)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setFixedSize(self.size_px, self.size_px)
 
@@ -661,6 +664,8 @@ class ControlPanel(QMainWindow):
             subprocess.run(["open", str(PETS_DIR)])
         elif sys.platform == "win32":
             os.startfile(str(PETS_DIR))
+        else:
+            subprocess.run(["xdg-open", str(PETS_DIR)])
 
     def closeEvent(self, event):
         # Pencere kapatıldığında uygulama arka planda çalışmaya devam etsin

@@ -1,6 +1,6 @@
 # KomaStage
 
-A cross-platform (macOS & Windows) desktop mascot engine built with Python and PyQt6. Turn your desktop into an interactive stage and import your own custom Shimeji character packs via `.zip` archives or folders.
+A cross-platform (**macOS, Windows & Linux**) desktop mascot engine built with Python and PyQt6. Turn your desktop into an interactive stage and import your own custom Shimeji character packs via `.zip` archives or folders.
 
 ## Features
 - **Custom Character Import (`.zip` & Folder):** Import any standard Shimeji sprite pack with a single click—automatically detects nested `img/` folders.
@@ -12,6 +12,7 @@ A cross-platform (macOS & Windows) desktop mascot engine built with Python and P
 Head over to the **[Releases](../../releases)** section on the right to download the pre-built binary for your OS:
 - **macOS:** `KomaStage-Mac.zip` (Unzip and right-click > Open on first launch)
 - **Windows:** `KomaStage.exe`
+- **Linux:** `KomaStage-Linux.tar.gz` (Extract and run `./KomaStage`)
 
 ## Run from Source
     git clone https://github.com/hiikari76/KomaStage.git
