@@ -20,13 +20,24 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
+        shell: pwsh
         run: |
-          pip install pyinstaller setproctitle
-          if exist requirements.txt pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller setproctitle
+          if (Test-Path ".\requirements.txt") { python -m pip install -r .\requirements.txt }
       - name: Build Windows app
-        run: pyinstaller --noconfirm --windowed --onedir --name "KomaStage" --add-data "assets;assets" main.py
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --windowed --onedir --name "KomaStage" --add-data "assets;assets" main.py
       - name: Zip Windows build
-        run: Compress-Archive -Path "dist\KomaStage" -DestinationPath "KomaStage-Windows.zip" -Force
+        shell: pwsh
+        run: |
+          Compress-Archive -Path ".\dist\KomaStage" -DestinationPath ".\KomaStage-Windows.zip" -Force
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KomaStage-Windows
+          path: KomaStage-Windows.zip
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
@@ -44,12 +55,20 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libxcb-cursor0 libgl1
-          pip install pyinstaller setproctitle
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller setproctitle
+          if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
       - name: Build Linux app
-        run: pyinstaller --noconfirm --windowed --onedir --name "KomaStage" --add-data "assets:assets" main.py
+        run: |
+          python -m PyInstaller --noconfirm --windowed --onedir --name "KomaStage" --add-data "assets:assets" main.py
       - name: Archive Linux build
-        run: tar -czf KomaStage-Linux.tar.gz -C dist KomaStage
+        run: |
+          tar -czf KomaStage-Linux.tar.gz -C dist KomaStage
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KomaStage-Linux
+          path: KomaStage-Linux.tar.gz
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
