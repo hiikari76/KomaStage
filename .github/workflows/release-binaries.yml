@@ -1,6 +1,10 @@
 name: Build Multi-OS Release Assets
 
 on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
   release:
     types: [published, edited]
 
@@ -26,6 +30,7 @@ jobs:
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v2.0
           files: KomaStage-Windows.zip
 
   build-linux:
@@ -48,4 +53,5 @@ jobs:
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v2.0
           files: KomaStage-Linux.tar.gz
