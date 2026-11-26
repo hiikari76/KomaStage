@@ -1,4 +1,4 @@
-name: Build and Release Desktop Pet
+name: Build and Release KomaStage
 
 on:
   push:
@@ -17,11 +17,11 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install PyQt6 pyinstaller pillow
-      - run: pyinstaller --noconfirm --windowed --onefile --name "MikuPet" --add-data "assets;assets" --icon="assets/shime1.png" main.py
+      - run: pyinstaller --noconfirm --windowed --onefile --name "KomaStage" --add-data "assets;assets" --icon="assets/shime1.png" main.py
       - uses: actions/upload-artifact@v4
         with:
-          name: MikuPet-Windows
-          path: dist/MikuPet.exe
+          name: KomaStage-Windows
+          path: dist/KomaStage.exe
 
   build-macos:
     runs-on: macos-latest
@@ -31,12 +31,12 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install PyQt6 pyinstaller pillow
-      - run: pyinstaller --noconfirm --windowed --name "MikuPet" --add-data "assets:assets" --icon="assets/shime1.png" main.py
-      - run: ditto -c -k --sequesterRsrc --keepParent dist/MikuPet.app dist/MikuPet-Mac.zip
+      - run: pyinstaller --noconfirm --windowed --name "KomaStage" --add-data "assets:assets" --icon="assets/shime1.png" main.py
+      - run: ditto -c -k --sequesterRsrc --keepParent dist/KomaStage.app dist/KomaStage-Mac.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: MikuPet-macOS
-          path: dist/MikuPet-Mac.zip
+          name: KomaStage-macOS
+          path: dist/KomaStage-Mac.zip
 
   release:
     needs: [build-windows, build-macos]
@@ -47,8 +47,8 @@ jobs:
           path: artifacts
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
-          name: Miku Desktop Pet v1.0.0
+          tag_name: v1.1.0
+          name: KomaStage v1.1.0 - Custom Shimeji Engine & Studio GUI
           files: |
-            artifacts/MikuPet-Windows/MikuPet.exe
-            artifacts/MikuPet-macOS/MikuPet-Mac.zip
+            artifacts/KomaStage-Windows/KomaStage.exe
+            artifacts/KomaStage-macOS/KomaStage-Mac.zip
